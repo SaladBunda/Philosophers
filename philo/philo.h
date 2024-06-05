@@ -14,10 +14,16 @@ typedef struct s_philo
 	int eating;
 	int sleeping;
 	int thinking;
-	int forks;
+	int (*forks)[2];
 	int alive;
 	int index;
+	int t_die;
+	int t_eat;
+	int t_sleep;
+	int t_to_eat;
 	pthread_t th;
+	pthread_mutex_t r_mutex;
+	pthread_mutex_t l_mutex;
 } t_philo;
 
 typedef struct s_info
@@ -28,7 +34,8 @@ typedef struct s_info
 	int t_sleep;
 	int t_to_eat;
 	t_philo *philo;
-	pthread_mutex_t mutex;
+	pthread_mutex_t r_mutex;
+	pthread_mutex_t l_mutex;
 }	t_info;
 
 int	ft_strlen(const char *s);
