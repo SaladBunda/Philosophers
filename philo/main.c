@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:04:39 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/05 18:58:24 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/06 18:35:32 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,13 @@ void *bunda(void *info)
 {	
 	t_philo *info_cast = (t_philo *)info;
 	struct timeval tv;
-	pthread_mutex_t rmutex = info_cast->r_mutex;
-	// pthread_mutex_t lmutex = info_cast->l_mutex;
 	gettimeofday(&tv, NULL);
     long milliseconds = tv.tv_usec / 1000;
-	for(long i = 0 ; i < 100; i++)
-	{
-		pthread_mutex_lock(&rmutex);
-		mails++;
-		pthread_mutex_unlock(&rmutex);
-	}
-	printf("%ld    %d    picked up fork #%d with address%p \n",milliseconds, info_cast->index,info_cast->forks[info_cast->index],&info_cast->forks[0]);
+	// pthread_mutex_lock(&rmutex);
+	// mails++;
+	// pthread_mutex_unlock(&rmutex);
+	printf("%ld tiem to die %d\n",milliseconds,info_cast->data->t_die);
+	// printf("%ld    %d    picked up fork #%d with address%p and time to die is %d\n",milliseconds, info_cast->index,info_cast->forks[info_cast->index][0],&info_cast->forks[0],info_cast[info_cast->index].data->t_die);
 	return NULL;
 }
 int not_dead(t_info info)
@@ -66,10 +62,11 @@ void init_philo(t_info *info)
 		forks[i][1] = 0;
 		info->philo[i].index = i;
 		info->philo[i].alive = 1;
-		info->philo[i].t_die = info->t_die;
-		info->philo[i].t_eat = info->t_eat;
-		info->philo[i].t_sleep = info->t_sleep;
-		info->philo[i].t_to_eat = info->t_to_eat;
+		// info->philo[i].t_die = info->t_die;
+		// info->philo[i].t_eat = info->t_eat;
+		// info->philo[i].t_sleep = info->t_sleep;
+		// info->philo[i].t_to_eat = info->t_to_eat;
+		info->philo[i].data = info;
 		i++;
 	}
 	i = -1;
@@ -101,8 +98,8 @@ int	main(int ac, char **av)
 				pthread_join(info.philo[i].th,NULL);
 		}
 		
-		printf("%d\n",mails);
-		return 0;
+		// printf("%d\n",mails);
+		// return 0;
 	}
 	return 1;
 }

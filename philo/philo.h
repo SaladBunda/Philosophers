@@ -9,21 +9,23 @@
 #include <stdlib.h>
 # include <sys/time.h>
 
+typedef struct s_info  t_info;
+
 typedef struct s_philo
 {
 	int eating;
 	int sleeping;
 	int thinking;
-	int (*forks)[2];
 	int alive;
 	int index;
 	int t_die;
 	int t_eat;
 	int t_sleep;
 	int t_to_eat;
+	t_info	*data;
 	pthread_t th;
-	pthread_mutex_t r_mutex;
-	pthread_mutex_t l_mutex;
+	int right;
+	int left;
 } t_philo;
 
 typedef struct s_info
@@ -34,8 +36,7 @@ typedef struct s_info
 	int t_sleep;
 	int t_to_eat;
 	t_philo *philo;
-	pthread_mutex_t r_mutex;
-	pthread_mutex_t l_mutex;
+	pthread_mutex_t *forks;
 }	t_info;
 
 int	ft_strlen(const char *s);
