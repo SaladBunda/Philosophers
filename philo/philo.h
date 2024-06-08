@@ -42,6 +42,7 @@ typedef struct s_info
 	t_philo *philo;
 	pthread_mutex_t *forks;
 	pthread_mutex_t dead;
+	pthread_mutex_t print;
 }	t_info;
 
 int	ft_strlen(const char *s);
