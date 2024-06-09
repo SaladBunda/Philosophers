@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:04:39 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/08 22:16:10 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/10 00:33:46 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,21 @@ int	ft_usleep(size_t milliseconds, t_info info)
 	size_t	start;
 	
 	start = ft_time();
-	while ((ft_time() - start) < milliseconds && info.status == 0)
-		usleep(500);
-	// while (1){
-	// 	if((ft_time() - start) >= milliseconds || info.status == 1)
-	// 	break;
+	// while ((ft_time() - start) < milliseconds && info.status == 0)
 	// 	usleep(500);
-	// }
+	while (1){
+		if((ft_time() - start) >= milliseconds || info.status == 1)
+		{
+			// printf("status:%d\n",info.status);
+			break;
+		}
+		usleep(500);
+		if((ft_time() - start) >= milliseconds || info.status == 1)
+		{
+			// printf("status:%d\n",info.status);
+			break;
+		}
+	}
 	return (0);
 }
 
@@ -55,72 +63,60 @@ void *bunda(void *info)
 	if((info_cast->index % 2) != 0 )
 	{
 		printf("%u %d is sleeping\n",ft_time() - start_time,info_cast->index);
-		ft_usleep((info_cast->data->t_sleep),*info_cast->data);
+		if(info_cast->data->status != 1)
+			ft_usleep((info_cast->data->t_sleep),*info_cast->data);
 	
 	}
 
-	while(1/* info_cast->data->status != 1 && info_cast->times_eaten < info_cast->data->t_to_eat */)
+	while(1)
 	{
 		if(info_cast->data->status == 1)
 			break;
 		pthread_mutex_lock(&info_cast->data->forks[info_cast->index]);
-		// if(info_cast->data->status != 1)
-		// {
-			pthread_mutex_lock(&info_cast->data->print);
-			if(info_cast->data->status != 1)
-				printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index);
-			pthread_mutex_unlock(&info_cast->data->print);
-		// }
+		
+		pthread_mutex_lock(&info_cast->data->print);
+		if(info_cast->data->status != 1)
+			printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index);
+		pthread_mutex_unlock(&info_cast->data->print);
+		
 		pthread_mutex_lock(&info_cast->data->forks[(info_cast->index + 1) % info_cast->data->num]);
-		// if(info_cast->data->status != 1)
-		// {
-			pthread_mutex_lock(&info_cast->data->print);
-			if(info_cast->data->status != 1)
-				printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index);
-			pthread_mutex_unlock(&info_cast->data->print);
-		// }
-		// if(info_cast->data->status != 1)
-		// {
-			pthread_mutex_lock(&info_cast->data->print);
-			if(info_cast->data->status != 1)
-				printf("%u %d is eating\n",ft_time() - start_time,info_cast->index);
-			pthread_mutex_unlock(&info_cast->data->print);
-			
-		// }
-		info_cast->times_eaten++;
+		
+		pthread_mutex_lock(&info_cast->data->print);
+		if(info_cast->data->status != 1)
+			printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index);
+		pthread_mutex_unlock(&info_cast->data->print);
+		
+		pthread_mutex_lock(&info_cast->data->print);
+		if(info_cast->data->status != 1)
+			printf("%u %d is eating\n",ft_time() - start_time,info_cast->index);
+		pthread_mutex_unlock(&info_cast->data->print);
+		
+		if(info_cast->times_eaten < info_cast->t_to_eat)
+			info_cast->times_eaten++;
+		// pthread_mutex_lock(&info_cast->data->tmp);
+		
 		info_cast->time_since_eat = ft_time() - start_time;
-		ft_usleep(info_cast->data->t_eat,*info_cast->data);
+		// pthread_mutex_unlock(&info_cast->data->tmp);
+		
+		if(info_cast->data->status != 1)
+			ft_usleep(info_cast->data->t_eat,*info_cast->data);
+			
 		pthread_mutex_unlock(&info_cast->data->forks[info_cast->index]);
 		pthread_mutex_unlock(&info_cast->data->forks[(info_cast->index + 1) % info_cast->data->num]);
-		// if(info_cast->data->status != 1)
-		// {
-			pthread_mutex_lock(&info_cast->data->print);
-			if(info_cast->data->status != 1)
-				printf("%u %d is sleeping\n",ft_time() - start_time,info_cast->index);
-			pthread_mutex_unlock(&info_cast->data->print);
-		// }
-		ft_usleep(info_cast->data->t_sleep,*info_cast->data);
-		// if(info_cast->data->status != 1)
-		// {
-			pthread_mutex_lock(&info_cast->data->print);
-			if(info_cast->data->status != 1)
-				printf("%u %d is thinking\n",ft_time() - start_time,info_cast->index);
-			pthread_mutex_unlock(&info_cast->data->print);
-		// }
-		if(info_cast->data->status == 1)
+		
+		pthread_mutex_lock(&info_cast->data->print);
+		if(info_cast->data->status != 1)
+			printf("%u %d is sleeping\n",ft_time() - start_time,info_cast->index);
+		pthread_mutex_unlock(&info_cast->data->print);
+		
+		if(info_cast->data->status != 1)
+			ft_usleep(info_cast->data->t_sleep,*info_cast->data);
+		pthread_mutex_lock(&info_cast->data->print);
+		if(info_cast->data->status != 1)
+			printf("%u %d is thinking\n",ft_time() - start_time,info_cast->index);
+		pthread_mutex_unlock(&info_cast->data->print);
+		if(info_cast->data->status == 1 || info_cast->data->done_eating)
 			break;
-		// if(ft_time() - info_cast->time_since_eat > (unsigned int) info_cast->data->t_die)
-		// {
-		// 	pthread_mutex_lock(&info_cast->data->dead);
-		// 	if(info_cast->data->status == 0)
-		// 	{
-		// 		info_cast->data->status = 1;
-		// 		printf("%u %d died \n", ft_time() - start_time, info_cast->index);
-		// 	}
-		// 	pthread_mutex_unlock(&info_cast->data->dead);
-		// 	return NULL;
-		// }
-		// return NULL;
 	}
 	return NULL;
 }
@@ -153,7 +149,6 @@ void init_philo(t_info *info)
 		info->philo[i].alive = 1;
 		info->philo[i].data = info;
 		info->philo[i].time_since_eat = 0;
-		info->philo[i].time_since_eat = 0;
 		i++;
 	}
 }
@@ -161,11 +156,11 @@ void init_philo(t_info *info)
 int	main(int ac, char **av)
 {
 	t_info info;
+	int tmp;
 
 	if(ac == 5 || ac == 6)
 	{
 		init_info(&info, av, ac);
-		// unsigned int start_time = ft_time();
 		info.forks = malloc(sizeof(pthread_mutex_t) * info.num);
 		if(!info.forks)
 			return 0;
@@ -176,6 +171,7 @@ int	main(int ac, char **av)
 		init_philo(&info);
 		pthread_mutex_init(&info.dead, NULL);
 		pthread_mutex_init(&info.print, NULL);
+		pthread_mutex_init(&info.tmp, NULL);
 		while(++i < info.num)
 			pthread_mutex_init(&info.forks[i], NULL);
 		i = -1;
@@ -188,14 +184,16 @@ int	main(int ac, char **av)
 			while(++j < info.num)
 			{
 				pthread_mutex_lock(&info.dead);
-				if((ft_time() - info.start_time) - info.philo[j].time_since_eat > (unsigned int) info.t_die)
+				// pthread_mutex_lock(&info.tmp);
+				tmp = info.philo[j].time_since_eat;
+				// pthread_mutex_unlock(&info.tmp);
+				if((ft_time() - info.start_time) -  tmp> (unsigned int) info.t_die)
 				{
 						info.status = 1;
 						pthread_mutex_lock(&info.print);
 						printf("%u %d -----------------------------------died\n", ft_time() - info.start_time, j);
 						pthread_mutex_unlock(&info.print);
 							break;
-
 				}
 				pthread_mutex_unlock(&info.dead);
 			}

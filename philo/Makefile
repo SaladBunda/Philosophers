@@ -5,8 +5,7 @@ DIR = ./
 OBJS = $(SRCS:%.c=$(DIR)%.o)
 # OBJB = $(SRCB:%.c=$(BONUS_DIR)%.o)
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
-NAME = philo
+CFLAGS = -Wall -Wextra -Werror 
 # BONUS_NAME = pipex_bonus
 
 all: $(NAME)
@@ -17,7 +16,7 @@ all: $(NAME)
 # 	$(CC) $(OBJB) $(IFLAGS) -o $(BONUS_NAME) 
 
 $(NAME): $(OBJS) $(DIR)philo.h
-	$(CC) -pthread $(OBJS) -o $(NAME) 
+	$(CC) $(CFLAGS) -pthread $(OBJS) -o $(NAME) 
 
 $(DIR)%.o: $(DIR)%.c $(DIR)philo.h
 	$(CC) $(CFLAGS) -pthread -c $< -o $@

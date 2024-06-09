@@ -38,11 +38,13 @@ typedef struct s_info
 	int t_eat;
 	int t_sleep;
 	int t_to_eat;
+	int done_eating;
 	unsigned int start_time;
 	t_philo *philo;
 	pthread_mutex_t *forks;
 	pthread_mutex_t dead;
 	pthread_mutex_t print;
+	pthread_mutex_t tmp;
 }	t_info;
 
 int	ft_strlen(const char *s);
