@@ -5,7 +5,7 @@ DIR = ./
 OBJS = $(SRCS:%.c=$(DIR)%.o)
 # OBJB = $(SRCB:%.c=$(BONUS_DIR)%.o)
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror -Ofast
 # BONUS_NAME = pipex_bonus
 NAME = philo
 
