@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/12 21:30:52 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:41:23 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,8 @@ int	main(int ac, char **av)
 		i = -1;
 		while(++i < info.num)
 			pthread_join(info.philo[i].th,NULL);
+		free(info.forks);
+		free(info.philo);
 		return 0;
 	}
 	return 1;
