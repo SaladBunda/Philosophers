@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/12 02:47:23 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:30:52 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,13 @@ void update_time(t_philo *philo)
 	UNLOCK(&philo->data->tmp);
 }
 
+void increment_meals(t_philo *philo)
+{
+	LOCK(&philo->data->meals);
+	philo->times_eaten++;
+	UNLOCK(&philo->data->meals);
+}
+
 void *bunda(void *info)
 {	
 	t_philo *info_cast;
@@ -115,9 +122,7 @@ void *bunda(void *info)
 		pick_first_fork(info_cast);
 		pick_second_fork(info_cast);
 		printing("is eating",info_cast);
-		LOCK(&info_cast->data->meals);
-		info_cast->times_eaten++;
-		UNLOCK(&info_cast->data->meals);
+		increment_meals(info_cast);
 		update_time(info_cast);
 		ft_usleep(info_cast->data->t_eat,info_cast->data);
 		put_fork(info_cast);
@@ -190,10 +195,16 @@ void init_philo(t_info *info)
 	}
 }
 
+void leaks()
+{
+	system("leaks philo");
+}
+
 int	main(int ac, char **av)
 {
 	t_info info;
 	int tmp;
+	atexit(leaks);
 
 	if(ac == 5 || ac == 6)
 	{
