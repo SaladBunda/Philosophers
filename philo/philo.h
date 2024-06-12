@@ -45,11 +45,13 @@ typedef struct s_info
 	pthread_mutex_t dead;
 	pthread_mutex_t print;
 	pthread_mutex_t tmp;
+	pthread_mutex_t meals;
+	pthread_mutex_t t_eaten;
 }	t_info;
 
 int	ft_strlen(const char *s);
 char	*ft_strdup(const char *s1);
-int	ft_atoi(char *s);
+int	ft_atoi(char *s, int *error);
 
 
 #endif

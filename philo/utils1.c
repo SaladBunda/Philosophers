@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 00:37:35 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/04 01:39:14 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/12 02:34:22 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	zero(char *s)
 	return (0);
 }
 
-int	ft_atoi(char *s)
+int	ft_atoi(char *s, int *error)
 {
 	int					i;
 	int					sign;
@@ -103,5 +103,7 @@ int	ft_atoi(char *s)
 	}
 	while (s[i] >= '0' && s[i] <= '9')
 		n = n * 10 +(s[i++] - 48);
+	if (s[i] != '\0' || n == 0 || (n * sign) > MAX || (n * sign) < MIN)
+		*error = 1;
 	return (n * sign);
 }

@@ -6,11 +6,14 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/11 02:51:30 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/12 02:47:23 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+#define LOCK pthread_mutex_lock
+#define UNLOCK pthread_mutex_unlock
 
 unsigned int ft_time(void)
 {
@@ -46,97 +49,143 @@ int one_philo(t_philo *philo)
 	return (1);
 }
 
+void sleep_odds(t_philo *philo)
+{
+	if((philo->index % 2) != 0)
+	{
+		LOCK(&philo->data->print);
+		if(philo->data->status != 1)
+			printf("%u %d is sleeping\n",ft_time() - philo->data->start_time,philo->index + 1);
+		UNLOCK(&philo->data->print);
+		ft_usleep((philo->data->t_sleep),philo->data);
+	}
+}
+
+void pick_first_fork(t_philo *philo)
+{
+	LOCK(&philo->data->forks[philo->index]);
+	LOCK(&philo->data->print);
+	if(philo->data->status != 1)
+		printf("%u %d has taken a fork\n",ft_time() - philo->data->start_time,philo->index + 1);
+	UNLOCK(&philo->data->print);
+}
+
+void pick_second_fork(t_philo *philo)
+{
+	LOCK(&philo->data->forks[(philo->index + 1) % philo->data->num]);
+	LOCK(&philo->data->print);
+	if(philo->data->status != 1)
+		printf("%u %d has taken a fork\n",ft_time() - philo->data->start_time,philo->index + 1);
+	UNLOCK(&philo->data->print);
+}
+
+void printing(char *str, t_philo *philo)
+{
+	LOCK(&philo->data->print);
+	if(philo->data->status != 1)
+		printf("%u %d %s\n",ft_time() - philo->data->start_time,philo->index + 1,str);
+	UNLOCK(&philo->data->print);
+}
+
+void put_fork(t_philo *philo)
+{
+	UNLOCK(&philo->data->forks[philo->index]);
+	UNLOCK(&philo->data->forks[(philo->index + 1) % philo->data->num]);
+}
+void update_time(t_philo *philo)
+{
+	LOCK(&philo->data->tmp);
+	philo->time_since_eat = ft_time() - philo->data->start_time;
+	UNLOCK(&philo->data->tmp);
+}
+
 void *bunda(void *info)
 {	
 	t_philo *info_cast;
-	unsigned int start_time;
 
 	info_cast = (t_philo *)info;
-	start_time = info_cast->data->start_time;
-
 	if(one_philo(info_cast) == 0)
 		return (NULL);
-
-	if((info_cast->index % 2) != 0)
-	{
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d is sleeping\n",ft_time() - start_time,info_cast->index);
-		pthread_mutex_unlock(&info_cast->data->print);
-		ft_usleep((info_cast->data->t_sleep),info_cast->data);
-	}
-
+	sleep_odds(info_cast);
 	while(1)
 	{
-		if(info_cast->data->status == 1)
+		if(info_cast->data->status == 1 || info_cast->data->done_eating == 1)
 			break;
-		pthread_mutex_lock(&info_cast->data->forks[info_cast->index]);
-
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index + 1);
-		pthread_mutex_unlock(&info_cast->data->print);
-		pthread_mutex_lock(&info_cast->data->forks[(info_cast->index + 1) % info_cast->data->num]);
-
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d has taken a fork\n",ft_time() - start_time,info_cast->index + 1);
-		pthread_mutex_unlock(&info_cast->data->print);
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d is eating\n",ft_time() - start_time,info_cast->index + 1);
-		pthread_mutex_unlock(&info_cast->data->print);
+		printing("is thinking",info_cast);
+		pick_first_fork(info_cast);
+		pick_second_fork(info_cast);
+		printing("is eating",info_cast);
+		LOCK(&info_cast->data->meals);
 		info_cast->times_eaten++;
-		pthread_mutex_lock(&info_cast->data->tmp);
-		info_cast->time_since_eat = ft_time() - start_time;
-		pthread_mutex_unlock(&info_cast->data->tmp);
+		UNLOCK(&info_cast->data->meals);
+		update_time(info_cast);
 		ft_usleep(info_cast->data->t_eat,info_cast->data);
-		pthread_mutex_unlock(&info_cast->data->forks[info_cast->index]);
-		pthread_mutex_unlock(&info_cast->data->forks[(info_cast->index + 1) % info_cast->data->num]);
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d is sleeping\n",ft_time() - start_time,info_cast->index + 1);
-		pthread_mutex_unlock(&info_cast->data->print);
+		put_fork(info_cast);
+		printing("is sleeping",info_cast);
 		ft_usleep(info_cast->data->t_sleep,info_cast->data);
-		pthread_mutex_lock(&info_cast->data->print);
-		if(info_cast->data->status != 1)
-			printf("%u %d is thinking\n",ft_time() - start_time,info_cast->index + 1);
-		pthread_mutex_unlock(&info_cast->data->print);
-		if(info_cast->data->status == 1)
+		if(info_cast->data->status == 1 || info_cast->data->done_eating == 1)
 			break;
 	}
 	return NULL;
 }
-
-void init_info(t_info *info,char **av,int ac)
+void test_arg(t_info *info, int *error)
 {
-	info->num = ft_atoi(av[1]);
+	if(info->num <= 0 || info->num > 200)
+		*error = 1;
+	if(info->t_die < 60)
+		*error = 1;
+	if(info->t_eat < 60)
+		*error = 1;
+	if(info->t_sleep < 60)
+		*error = 1;
+}
+
+int init_info(t_info *info,char **av,int ac)
+{
+	int error;
+	error = 0;
+	info->num = ft_atoi(av[1],&error);
 	info->start_time = ft_time();
-	info->t_die = ft_atoi(av[2]);
-	info->t_eat = ft_atoi(av[3]);
-	info->t_sleep = ft_atoi(av[4]);
+	info->t_die = ft_atoi(av[2],&error);
+	info->t_eat = ft_atoi(av[3],&error);
+	info->t_sleep = ft_atoi(av[4],&error);
 	if (ac == 6)
-		info->t_to_eat = ft_atoi(av[5]);
+		info->t_to_eat = ft_atoi(av[5],&error);
 	else
 		info->t_to_eat = -1;
+	test_arg(info,&error);
+	if(error != 0 || (ac == 6 && info->t_to_eat <= 0))
+		return 1;
+	return 0;
+}
+
+void check_eated_meals(t_info *info)
+{
+	int i = -1;
+	int sum = 0;
+	while(++i < info->num)
+	{
+		LOCK(&info->meals);
+		sum += info->philo[i].times_eaten;
+		UNLOCK(&info->meals);
+
+	}
+	if(sum == info->t_to_eat * info->num)
+		info->done_eating = 1;
 }
 
 void init_philo(t_info *info)
 {
 	int i = 0;
 	info->status = 0;
-	int (*forks)[2] = malloc(sizeof(int) * info->num);
-	if(!forks)
-		return ;
+	info->done_eating = 0;
 	while(i < info->num)
 	{
-		forks[i][0] = i;
-		forks[i][1] = 0;
 		info->philo[i].index = i;
 		info->philo[i].alive = 1;
 		info->philo[i].data = info;
 		info->philo[i].time_since_eat = 0;
-		info->philo[i].time_since_eat = 0;
+		info->philo[i].times_eaten = 0;
 		i++;
 	}
 }
@@ -148,8 +197,8 @@ int	main(int ac, char **av)
 
 	if(ac == 5 || ac == 6)
 	{
-		init_info(&info, av, ac);
-		// unsigned int start_time = ft_time();
+		if(init_info(&info, av, ac) == 1)
+			return (write(2,"Invalid arguments\n",18),1);
 		info.forks = malloc(sizeof(pthread_mutex_t) * info.num);
 		if(!info.forks)
 			return 0;
@@ -161,33 +210,37 @@ int	main(int ac, char **av)
 		pthread_mutex_init(&info.dead, NULL);
 		pthread_mutex_init(&info.print, NULL);
 		pthread_mutex_init(&info.tmp, NULL);
+		pthread_mutex_init(&info.meals, NULL);
+		pthread_mutex_init(&info.t_eaten, NULL);
 		while(++i < info.num)
 			pthread_mutex_init(&info.forks[i], NULL);
 		i = -1;
 		while(++i < info.num)
 			pthread_create(&info.philo[i].th,NULL,(void *)bunda,(void *)&info.philo[i]);
 		int j =-1;
-		while(info.status == 0)
+		check_eated_meals(&info);
+
+		while(info.status == 0 && info.done_eating == 0)
 		{
 			j = -1;
+			check_eated_meals(&info);
 			while(++j < info.num)
 			{
-				pthread_mutex_lock(&info.dead);
-				pthread_mutex_lock(&info.tmp);
+				LOCK(&info.dead);
+				LOCK(&info.tmp);
 				tmp = info.philo[j].time_since_eat;
-				pthread_mutex_unlock(&info.tmp);
+				UNLOCK(&info.tmp);
 				if((ft_time() - info.start_time) - tmp > (unsigned int) info.t_die)
 				{
 						info.status = 1;
-						pthread_mutex_lock(&info.print);
-						printf("%u %d -----------------------------------died\n", ft_time() - info.start_time, j + 1);
-						pthread_mutex_unlock(&info.print);
+						LOCK(&info.print);
+						printf("%u %d died\n", ft_time() - info.start_time, j + 1);
+						UNLOCK(&info.print);
 							break;
-
 				}
-				pthread_mutex_unlock(&info.dead);
+				UNLOCK(&info.dead);
 			}
-			 usleep(500);
+			usleep(500);
 		}
 		i = -1;
 		while(++i < info.num)
