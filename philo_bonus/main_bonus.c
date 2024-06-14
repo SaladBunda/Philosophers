@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/14 21:42:33 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/14 22:36:25 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,19 @@ void	*routine(void *info)
 	return (NULL);
 }
 
+void    cleanup(t_info *info)
+{
+    sem_close(info->forks);
+    sem_unlink("/forks");
+    sem_close(info->print);
+    sem_unlink("/print");
+    sem_close(info->dead);
+    sem_unlink("/dead");
+    sem_close(info->tmp);
+    sem_unlink("/tmp");
+    free(info->philo);
+}
+
 void	main_thread(t_info *info, int i)
 {
 	int	tmp;
@@ -63,9 +76,9 @@ void	main_thread(t_info *info, int i)
 				sem_wait(info->print);
 				printf("%u %d died\n", ft_time() - info->start, i + 1);
 				sem_post(info->print);
-				// for (int j = 0; j < info->num; j++)
-                //     kill(info->philo[j].th_fid, SIGTERM);
+				kill(0, SIGTERM);  // Signal all child processes to terminate
 				exit(1);
+				// exit(1);
 			}
 			sem_post(info->dead);
 		}
@@ -103,32 +116,31 @@ int	main(int ac, char **av)
 				// exit(1);
 			}
 		}
-		int status;
-		for (int j = 0; j < info.num; j++)
-		{
-        	waitpid(info.philo[j].th_fid,&status, 0);
-			if(status != 0)
-			{
-				i=-1;
-				while(++i < info.num)
-				{
-					// sem_close(info.forks);
-				// free(philo[i].v);
-					kill((pid_t)info.philo[i].th_fid, SIGINT);
-				}
-			}
-				
+
+		// int status;
+		 int status;
+        for (int j = 0; j < info.num; j++)
+        {
+            waitpid(info.philo[j].th_fid, &status, 0);
+        }
+
+        i = -1;
+        // while (++i < info.num)
+        // {
+        //     kill((pid_t)info.philo[i].th_fid, SIGTERM);
+        // }
+        cleanup(&info);
 			
 				
 
-		}
+		// }
 		// check_eated_meals(&info);
 		// main_thread(&info);
 		// i = -1;
 		// while (++i < info.num)
 		// 	waitpid(info.philo[i].th, NULL);
-		free(info.forks);
-		free(info.philo);
+		// free(info.forks);
+		// free(info.philo);
 		return (0);
 		// while(1);
 	}
