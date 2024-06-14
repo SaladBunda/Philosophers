@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/14 11:34:02 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/14 21:42:33 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	*routine(void *info)
 {
@@ -22,11 +22,13 @@ void	*routine(void *info)
 	sleep_odds(info_cast);
 	while (1)
 	{
-		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			break ;
+		// if (info_cast->data->status == 1/*  || info_cast->data->done_eating == 1 */)
+		// 	break ;
 		printing("is thinking", info_cast);
+		
 		pick_first_fork(info_cast);
-		pick_second_fork(info_cast);
+		// pick_first_fork(info_cast);
+		// pick_second_fork(info_cast);
 		printing("is eating", info_cast);
 		increment_meals(info_cast);
 		update_time(info_cast);
@@ -34,40 +36,47 @@ void	*routine(void *info)
 		put_fork(info_cast);
 		printing("is sleeping", info_cast);
 		ft_usleep(info_cast->data->t_sleep, info_cast->data);
-		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			break ;
+		// if (info_cast->data->status == 1/*  || info_cast->data->done_eating == 1 */)
+		// 	break ;
 	}
 	return (NULL);
 }
 
-void	main_thread(t_info *info)
+void	main_thread(t_info *info, int i)
 {
 	int	tmp;
 	int	j;
 
-	while (info->status == 0 && info->done_eating == 0)
+	while (info->status == 0/*  && info->done_eating == 0 */)
 	{
 		j = -1;
-		check_eated_meals(info);
-		while (++j < info->num)
-		{
-			LOCK(&info->dead);
-			LOCK(&info->tmp);
-			tmp = info->philo[j].time_since_eat;
-			UNLOCK(&info->tmp);
+		// check_eated_meals(info);
+		// while (++j < info->num)
+		// {
+			sem_wait(info->dead);
+			sem_wait(info->tmp);
+			tmp = info->philo[i].time_since_eat;
+			sem_post(info->tmp);
 			if ((ft_time() - info->start) - tmp > (unsigned int) info->t_die)
 			{
 				info->status = 1;
-				LOCK(&info->print);
-				printf("%u %d died\n", ft_time() - info->start, j + 1);
-				UNLOCK(&info->print);
-				break ;
+				sem_wait(info->print);
+				printf("%u %d died\n", ft_time() - info->start, i + 1);
+				sem_post(info->print);
+				// for (int j = 0; j < info->num; j++)
+                //     kill(info->philo[j].th_fid, SIGTERM);
+				exit(1);
 			}
-			UNLOCK(&info->dead);
+			sem_post(info->dead);
 		}
 		usleep(500);
-	}
+	// }
 }
+
+// void *monitor(void *to_be_casted)
+// {
+// 	t_philo *philo = (t_philo *)
+// }
 
 int	main(int ac, char **av)
 {
@@ -78,20 +87,50 @@ int	main(int ac, char **av)
 	{
 		if (init_info(&info, av, ac) == 1)
 			return (write(2, "Invalid arguments\n", 18), 1);
+		
 		if (init_philo(&info) == 1)
 			return (write(2, "Error while starting program\n", 29), 1);
-		init_mutexes(&info);
+		if(init_mutexes(&info) == 1)
+			return (1);
 		i = -1;
 		while (++i < info.num)
-			pthread_create(&info.philo[i].th, NULL, routine, &info.philo[i]);
-		check_eated_meals(&info);
-		main_thread(&info);
-		i = -1;
-		while (++i < info.num)
-			pthread_join(info.philo[i].th, NULL);
+		{
+			info.philo[i].th_fid = fork();
+			if(info.philo[i].th_fid == 0)
+			{
+				pthread_create(&info.philo[i].th, NULL,routine,&info.philo[i]);
+				main_thread(&info, i);
+				// exit(1);
+			}
+		}
+		int status;
+		for (int j = 0; j < info.num; j++)
+		{
+        	waitpid(info.philo[j].th_fid,&status, 0);
+			if(status != 0)
+			{
+				i=-1;
+				while(++i < info.num)
+				{
+					// sem_close(info.forks);
+				// free(philo[i].v);
+					kill((pid_t)info.philo[i].th_fid, SIGINT);
+				}
+			}
+				
+			
+				
+
+		}
+		// check_eated_meals(&info);
+		// main_thread(&info);
+		// i = -1;
+		// while (++i < info.num)
+		// 	waitpid(info.philo[i].th, NULL);
 		free(info.forks);
 		free(info.philo);
 		return (0);
+		// while(1);
 	}
 	return (1);
 }

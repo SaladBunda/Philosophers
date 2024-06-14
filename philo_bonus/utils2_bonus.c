@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   utils2_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:29:26 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/13 18:49:56 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/14 18:59:31 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 unsigned int	ft_time(void)
 {
@@ -37,21 +37,21 @@ int	ft_usleep(size_t milliseconds, t_info *info)
 
 void	printing(char *str, t_philo *ph)
 {
-	LOCK(&ph->data->print);
+	sem_wait(ph->data->print);
 	if (ph->data->status != 1)
 		printf("%u %d %s\n", ft_time() - ph->data->start, ph->i + 1, str);
-	UNLOCK(&ph->data->print);
+	sem_post(ph->data->print);
 }
 
 void	put_fork(t_philo *philo)
 {
-	UNLOCK(&philo->data->forks[philo->i]);
-	UNLOCK(&philo->data->forks[(philo->i + 1) % philo->data->num]);
+	sem_post(philo->data->forks);
+	sem_post(philo->data->forks);
 }
 
 void	update_time(t_philo *philo)
 {
-	LOCK(&philo->data->tmp);
+	sem_wait(philo->data->tmp);
 	philo->time_since_eat = ft_time() - philo->data->start;
-	UNLOCK(&philo->data->tmp);
+	sem_post(philo->data->tmp);
 }
