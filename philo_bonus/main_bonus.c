@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/15 20:17:00 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/15 21:24:19 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ void	*main_thread(void *fo)
 		// while (++j < info->num)
 		// {
 			sem_wait(info->data->dead);
-			// sem_wait(info->data->tmp);
+			sem_wait(info->data->tmp);
 			tmp = info->time_since_eat;
-			// sem_post(info->data->tmp);
+			sem_post(info->data->tmp);
 			if ((ft_time() - info->data->start) - tmp > (unsigned int) info->data->t_die)
 			{
 				// printf("time ot die is:%u\n",info->t_die);
 				info->data->status = 1;
 				sem_wait(info->data->print);
-				printf("%u %d died\n", ft_time() - info->data->start, info->i + 1);
+				printf("%u %d ---------------------------------------------died\n", ft_time() - info->data->start, info->i + 1);
 				sem_post(info->data->print);
-				// kill(0, SIGTERM);  // Signal all child processes to terminate
+				kill(0, SIGTERM);  // Signal all child processes to terminate
 				exit(1);
 				// exit(1);
 			}
@@ -95,11 +95,18 @@ void	*routine(void *info)
 // 	t_philo *philo = (t_philo *)
 // }
 
+void sigterm_handler(int sig)
+{
+	(void)sig;
+	exit(0);
+}
+
 int	main(int ac, char **av)
 {
 	t_info	info;
 	int		i;
 
+	signal(SIGTERM, sigterm_handler);
 	if (ac == 5 || ac == 6)
 	{
 		if (init_info(&info, av, ac) == 1)
@@ -134,7 +141,7 @@ int	main(int ac, char **av)
 				{
 					// sem_close(philo[i].race);
 					// free(philo[i].v);
-					kill(info.philo[i].th_fid, SIGINT);
+					kill(info.philo[i].th_fid, SIGTERM);
 				}
 				break ;
 			}
