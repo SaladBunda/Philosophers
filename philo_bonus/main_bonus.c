@@ -6,17 +6,51 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/14 22:36:25 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/15 20:17:00 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+void	*main_thread(void *fo)
+{
+	int	tmp;
+	t_philo *info = (t_philo *)fo;
+	// int	j;
+	while (1/* info->status == 0 *//*  && info->done_eating == 0 */)
+	{
+		// j = -1;
+		// check_eated_meals(info);
+		// while (++j < info->num)
+		// {
+			sem_wait(info->data->dead);
+			// sem_wait(info->data->tmp);
+			tmp = info->time_since_eat;
+			// sem_post(info->data->tmp);
+			if ((ft_time() - info->data->start) - tmp > (unsigned int) info->data->t_die)
+			{
+				// printf("time ot die is:%u\n",info->t_die);
+				info->data->status = 1;
+				sem_wait(info->data->print);
+				printf("%u %d died\n", ft_time() - info->data->start, info->i + 1);
+				sem_post(info->data->print);
+				// kill(0, SIGTERM);  // Signal all child processes to terminate
+				exit(1);
+				// exit(1);
+			}
+			sem_post(info->data->dead);
+		usleep(500);
+	}
+	// }
+	return NULL;
+}
 
 void	*routine(void *info)
 {
 	t_philo	*info_cast;
 
 	info_cast = (t_philo *)info;
+	pthread_create(&info_cast->th, NULL,(void *)main_thread,info_cast);
 	if (one_philo(info_cast) == 0)
 		return (NULL);
 	sleep_odds(info_cast);
@@ -42,49 +76,19 @@ void	*routine(void *info)
 	return (NULL);
 }
 
-void    cleanup(t_info *info)
-{
-    sem_close(info->forks);
-    sem_unlink("/forks");
-    sem_close(info->print);
-    sem_unlink("/print");
-    sem_close(info->dead);
-    sem_unlink("/dead");
-    sem_close(info->tmp);
-    sem_unlink("/tmp");
-    free(info->philo);
-}
+// void    cleanup(t_info *info)
+// {
+//     sem_close(info->forks);
+//     sem_unlink("/forks");
+//     sem_close(info->print);
+//     sem_unlink("/print");
+//     sem_close(info->dead);
+//     sem_unlink("/dead");
+//     sem_close(info->tmp);
+//     sem_unlink("/tmp");
+//     free(info->philo);
+// }
 
-void	main_thread(t_info *info, int i)
-{
-	int	tmp;
-	int	j;
-
-	while (info->status == 0/*  && info->done_eating == 0 */)
-	{
-		j = -1;
-		// check_eated_meals(info);
-		// while (++j < info->num)
-		// {
-			sem_wait(info->dead);
-			sem_wait(info->tmp);
-			tmp = info->philo[i].time_since_eat;
-			sem_post(info->tmp);
-			if ((ft_time() - info->start) - tmp > (unsigned int) info->t_die)
-			{
-				info->status = 1;
-				sem_wait(info->print);
-				printf("%u %d died\n", ft_time() - info->start, i + 1);
-				sem_post(info->print);
-				kill(0, SIGTERM);  // Signal all child processes to terminate
-				exit(1);
-				// exit(1);
-			}
-			sem_post(info->dead);
-		}
-		usleep(500);
-	// }
-}
 
 // void *monitor(void *to_be_casted)
 // {
@@ -111,9 +115,10 @@ int	main(int ac, char **av)
 			info.philo[i].th_fid = fork();
 			if(info.philo[i].th_fid == 0)
 			{
-				pthread_create(&info.philo[i].th, NULL,routine,&info.philo[i]);
-				main_thread(&info, i);
-				// exit(1);
+				routine(&info.philo[i]);
+				// pthread_create(&info.philo[i].th, NULL,routine,&info.philo[i]);
+				// main_thread(&info, i);
+				exit(0);
 			}
 		}
 
@@ -122,14 +127,25 @@ int	main(int ac, char **av)
         for (int j = 0; j < info.num; j++)
         {
             waitpid(info.philo[j].th_fid, &status, 0);
+			if (status != 0)
+			{
+			i = -1;
+				while (++i < info.num)
+				{
+					// sem_close(philo[i].race);
+					// free(philo[i].v);
+					kill(info.philo[i].th_fid, SIGINT);
+				}
+				break ;
+			}
         }
 
-        i = -1;
+        // i = -1;
         // while (++i < info.num)
         // {
         //     kill((pid_t)info.philo[i].th_fid, SIGTERM);
         // }
-        cleanup(&info);
+        // cleanup(&info);
 			
 				
 
