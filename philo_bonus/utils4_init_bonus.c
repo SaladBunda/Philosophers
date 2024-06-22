@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/14 21:38:43 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/22 21:35:04 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,25 +41,30 @@ int	init_info(t_info *info, char **av, int ac)
 	test_arg(info, &error);
 	if (error != 0 || (ac == 6 && info->t_to_eat <= 0))
 		return (1);
+	sem_unlink("/sim_start");
+	// sem_unlink("/meal_count");
+	info->sim_start = sem_open("/sim_start", O_CREAT, 0644, 0);
+    if (info->sim_start == SEM_FAILED)
+        return (1);
 	return (0);
 }
 
-void	check_eated_meals(t_info *info)
-{
-	int	i;
-	int	sum;
+// void	check_eated_meals(t_info *info)
+// {
+// 	int	i;
+// 	int	sum;
 
-	i = -1;
-	sum = 0;
-	while (++i < info->num)
-	{
-		sem_wait(info->meals);
-		sum += info->philo[i].times_eaten;
-		sem_post(info->meals);
-	}
-	if (sum == info->t_to_eat * info->num)
-		info->done_eating = 1;
-}
+// 	i = -1;
+// 	sum = 0;
+// 	while (++i < info->num)
+// 	{
+// 		sem_wait(info->meals);
+// 		sum += info->philo[i].times_eaten;
+// 		sem_post(info->meals);
+// 	}
+// 	if (sum == info->t_to_eat * info->num)
+// 		info->done_eating = 1;
+// }
 
 int	init_philo(t_info *info)
 {
