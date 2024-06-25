@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/23 18:47:21 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:56:53 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,19 @@ void	*routine(void *info)
 		printing("is eating", info_cast);
 		update_time(info_cast);
 		ft_usleep(info_cast->data->t_eat, info_cast->data);
+		info_cast->times_eaten++;
 		put_fork(info_cast);
+		// if((info_cast->i + 1) == info_cast->data->num /* && (info_cast->i + 1) % 2 == 0 */ && info_cast->times_eaten == info_cast->data->t_to_eat)
+		// {
+		// 	// printf("exiting ------------------------------------------------------------------------");
+		// 	exit(1);
+		// }
 		printing("is sleeping", info_cast);
 		ft_usleep(info_cast->data->t_sleep, info_cast->data);
 
-		info_cast->times_eaten++;
 		
 		// printf("philo %d times eaten: %d    meals to eat:%d\n",info_cast->i,info_cast->times_eaten,info_cast->data->t_to_eat);
 		// printf("philo %d | number of philo %d      is pair:%d          times eaten: %d | times to eat: %d\n",info_cast->i + 1,info_cast->data->num,(info_cast->i + 1) % 2,info_cast->times_eaten,info_cast->data->t_to_eat);
-		if((info_cast->i + 1) == info_cast->data->num /* && (info_cast->i + 1) % 2 == 0 */ && info_cast->times_eaten == info_cast->data->t_to_eat)
-		{
-			// printf("exiting ------------------------------------------------------------------------");
-			exit(1);
-		}
 	}
 	return (NULL);
 }
