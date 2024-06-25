@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:29:26 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 02:04:12 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:19:48 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	ft_usleep(size_t milliseconds, t_info *info)
 		UNLOCK(&info->death_status);
 		if (tmp2 == 1 || tmp == 1)
 			break ;
-		usleep(500);	
+		usleep(500);
 	}
 	return (0);
 }

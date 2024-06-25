@@ -6,13 +6,13 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:34:00 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 01:42:02 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:21:40 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	one_philo(t_philo *philo)
+int	one(t_philo *philo)
 {
 	if (philo->data->num == 1)
 	{
@@ -62,7 +62,7 @@ void	pick_second_fork(t_philo *philo)
 void	increment_meals(t_philo *philo)
 {
 	LOCK(&philo->data->meals);
-	if(philo->times_eaten < philo->data->t_to_eat)
+	if (philo->times_eaten < philo->data->t_to_eat)
 		philo->times_eaten++;
 	UNLOCK(&philo->data->meals);
 }

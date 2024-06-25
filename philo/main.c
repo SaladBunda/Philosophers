@@ -6,13 +6,13 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 02:10:48 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:22:21 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void lower_lines(t_philo *info_cast)
+void	lower_lines(t_philo *info_cast)
 {
 	update_time(info_cast);
 	ft_usleep(info_cast->data->t_eat, info_cast->data);
@@ -20,31 +20,36 @@ void lower_lines(t_philo *info_cast)
 	put_fork(info_cast);
 }
 
+void	print_death(t_info *info, int j)
+{
+	LOCK(&info->print);
+	printf("%u %d died\n", ft_time() - info->start, j + 1);
+	UNLOCK(&info->print);
+}
+
 void	*routine(void *info)
 {
-	t_philo	*info_cast;
+	t_philo	*ph;
 
-	info_cast = (t_philo *)info;
-	// if (one_philo(info_cast) == 0)
-	// 	return (NULL);
-	sleep_odds(info_cast);
+	ph = (t_philo *)info;
+	sleep_odds(ph);
 	while (1)
 	{
-		LOCK(&info_cast->data->death_status);
-		if (one_philo(info_cast) == 0 || info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			return(UNLOCK(&info_cast->data->death_status), NULL);
-		UNLOCK(&info_cast->data->death_status);
-		printing("is thinking", info_cast);
-		pick_first_fork(info_cast);
-		pick_second_fork(info_cast);
-		printing("is eating", info_cast);
-		lower_lines(info_cast);
-		LOCK(&info_cast->data->death_status);
-		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			return(UNLOCK(&info_cast->data->death_status),NULL);
-		UNLOCK(&info_cast->data->death_status);
-		printing("is sleeping", info_cast);
-		ft_usleep(info_cast->data->t_sleep, info_cast->data);
+		LOCK(&ph->data->death_status);
+		if (one(ph) == 0 || ph->data->status == 1 || ph->data->done_eating == 1)
+			return (UNLOCK(&ph->data->death_status), NULL);
+		UNLOCK(&ph->data->death_status);
+		printing("is thinking", ph);
+		pick_first_fork(ph);
+		pick_second_fork(ph);
+		printing("is eating", ph);
+		lower_lines(ph);
+		LOCK(&ph->data->death_status);
+		if (ph->data->status == 1 || ph->data->done_eating == 1)
+			return (UNLOCK(&ph->data->death_status), NULL);
+		UNLOCK(&ph->data->death_status);
+		printing("is sleeping", ph);
+		ft_usleep(ph->data->t_sleep, ph->data);
 	}
 	return (NULL);
 }
@@ -69,9 +74,7 @@ void	main_thread(t_info *info)
 				LOCK(&info->death_status);
 				info->status = 1;
 				UNLOCK(&info->death_status);
-				LOCK(&info->print);
-				printf("%u %d died\n", ft_time() - info->start, j + 1);
-				UNLOCK(&info->print);
+				print_death(info, j);
 				break ;
 			}
 			UNLOCK(&info->dead);

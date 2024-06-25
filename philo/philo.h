@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/24 00:26:30 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:21:53 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int				ft_usleep(size_t milliseconds, t_info *info);
 void			printing(char *str, t_philo *ph);
 void			put_fork(t_philo *philo);
 void			update_time(t_philo *philo);
-int				one_philo(t_philo *philo);
+int				one(t_philo *philo);
 void			sleep_odds(t_philo *philo);
 void			pick_first_fork(t_philo *philo);
 void			pick_second_fork(t_philo *philo);
