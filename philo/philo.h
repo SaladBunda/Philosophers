@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 02:21:53 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:35:37 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,9 @@ int				init_info(t_info *info, char **av, int ac);
 void			check_eated_meals(t_info *info);
 int				init_philo(t_info *info);
 void			init_mutexes(t_info *info);
+void			free_info(t_info *info);
+void			lower_lines(t_philo *info_cast);
+void			print_death(t_info *info, int j);
+void			print_error(void);
 
 #endif
