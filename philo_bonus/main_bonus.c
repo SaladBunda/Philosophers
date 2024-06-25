@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 21:41:34 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/23 18:47:21 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ void	*routine(void *info)
 	sleep_odds(info_cast);
 	while (1)
 	{
+		if(info_cast->i == info_cast->data->num && info_cast->i % 2 == 0 && info_cast->times_eaten == info_cast->data->t_to_eat)
+			exit(1);
 		printing("is thinking", info_cast);
 		pick_first_fork(info_cast);
 		printing("is eating", info_cast);
@@ -57,6 +59,16 @@ void	*routine(void *info)
 		put_fork(info_cast);
 		printing("is sleeping", info_cast);
 		ft_usleep(info_cast->data->t_sleep, info_cast->data);
+
+		info_cast->times_eaten++;
+		
+		// printf("philo %d times eaten: %d    meals to eat:%d\n",info_cast->i,info_cast->times_eaten,info_cast->data->t_to_eat);
+		// printf("philo %d | number of philo %d      is pair:%d          times eaten: %d | times to eat: %d\n",info_cast->i + 1,info_cast->data->num,(info_cast->i + 1) % 2,info_cast->times_eaten,info_cast->data->t_to_eat);
+		if((info_cast->i + 1) == info_cast->data->num /* && (info_cast->i + 1) % 2 == 0 */ && info_cast->times_eaten == info_cast->data->t_to_eat)
+		{
+			// printf("exiting ------------------------------------------------------------------------");
+			exit(1);
+		}
 	}
 	return (NULL);
 }
@@ -93,6 +105,19 @@ int	main(int ac, char **av)
 		// {
 		// 	sem_post(info.sim_start);
 		// }
+
+
+		// int total_meals = info.num * info.t_to_eat;
+		// for (int j = 0; j < total_meals; j++)
+		// {
+		// 	sem_wait(info.meal_count);
+		// 	while (++i < info.num)
+		// 		{
+
+		// 			kill(info.philo[i].th_fid, SIGKILL);
+		// 		}
+		// }
+
 		 int status;
 
             waitpid(/* info.philo[j].th_fid */ 0, &status, 0);

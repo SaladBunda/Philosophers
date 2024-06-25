@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:29:26 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/13 18:49:56 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:04:12 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,21 @@ unsigned int	ft_time(void)
 int	ft_usleep(size_t milliseconds, t_info *info)
 {
 	size_t	start;
+	int		tmp;
+	int		tmp2;
 
 	start = ft_time();
 	while ((ft_time() - start) < milliseconds)
 	{
-		if (info->status == 1)
+		LOCK(&info->check_meals);
+		tmp = info->done_eating;
+		UNLOCK(&info->check_meals);
+		LOCK(&info->death_status);
+		tmp2 = info->status;
+		UNLOCK(&info->death_status);
+		if (tmp2 == 1 || tmp == 1)
 			break ;
-		usleep(500);
+		usleep(500);	
 	}
 	return (0);
 }
@@ -38,8 +46,10 @@ int	ft_usleep(size_t milliseconds, t_info *info)
 void	printing(char *str, t_philo *ph)
 {
 	LOCK(&ph->data->print);
+	LOCK(&ph->data->death_status);
 	if (ph->data->status != 1)
 		printf("%u %d %s\n", ft_time() - ph->data->start, ph->i + 1, str);
+	UNLOCK(&ph->data->death_status);
 	UNLOCK(&ph->data->print);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/13 00:11:33 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:00:06 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,11 @@ void	check_eated_meals(t_info *info)
 		UNLOCK(&info->meals);
 	}
 	if (sum == info->t_to_eat * info->num)
+	{
+		LOCK(&info->death_status);	
 		info->done_eating = 1;
+		UNLOCK(&info->death_status);	
+	}
 }
 
 int	init_philo(t_info *info)
@@ -96,6 +100,8 @@ void	init_mutexes(t_info *info)
 	pthread_mutex_init(&info->tmp, NULL);
 	pthread_mutex_init(&info->meals, NULL);
 	pthread_mutex_init(&info->t_eaten, NULL);
+	pthread_mutex_init(&info->check_meals, NULL);
+	pthread_mutex_init(&info->death_status, NULL);
 	while (++i < info->num)
 		pthread_mutex_init(&info->forks[i], NULL);
 }

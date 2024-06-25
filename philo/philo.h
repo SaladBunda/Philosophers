@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/13 00:11:04 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/24 00:26:30 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct s_info
 	pthread_mutex_t	tmp;
 	pthread_mutex_t	meals;
 	pthread_mutex_t	t_eaten;
+	pthread_mutex_t	check_meals;
+	pthread_mutex_t	death_status;
 }	t_info;
 
 int				ft_strlen(const char *s);

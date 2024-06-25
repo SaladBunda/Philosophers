@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 21:33:03 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/22 21:49:30 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_info
 	sem_t			*meal_count;
     sem_t			*done_meals;
 	sem_t			*sim_start;
-	pthread_t		food_monitor;
+	// pthread_t		food_monitor;
 }	t_info;
 
 int				ft_strlen(const char *s);

@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:34:00 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/12 23:34:31 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 01:42:02 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ void	pick_first_fork(t_philo *philo)
 	str = "has taken a fork";
 	LOCK(&philo->data->forks[philo->i]);
 	LOCK(&philo->data->print);
+	LOCK(&philo->data->death_status);
 	if (philo->data->status != 1)
 		printf("%u %d %s\n", ft_time() - philo->data->start, philo->i + 1, str);
+	UNLOCK(&philo->data->death_status);
 	UNLOCK(&philo->data->print);
 }
 
@@ -60,6 +62,7 @@ void	pick_second_fork(t_philo *philo)
 void	increment_meals(t_philo *philo)
 {
 	LOCK(&philo->data->meals);
-	philo->times_eaten++;
+	if(philo->times_eaten < philo->data->t_to_eat)
+		philo->times_eaten++;
 	UNLOCK(&philo->data->meals);
 }

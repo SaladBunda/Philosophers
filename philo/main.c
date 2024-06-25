@@ -6,36 +6,45 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/14 11:34:02 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/25 02:10:48 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void lower_lines(t_philo *info_cast)
+{
+	update_time(info_cast);
+	ft_usleep(info_cast->data->t_eat, info_cast->data);
+	increment_meals(info_cast);
+	put_fork(info_cast);
+}
 
 void	*routine(void *info)
 {
 	t_philo	*info_cast;
 
 	info_cast = (t_philo *)info;
-	if (one_philo(info_cast) == 0)
-		return (NULL);
+	// if (one_philo(info_cast) == 0)
+	// 	return (NULL);
 	sleep_odds(info_cast);
 	while (1)
 	{
-		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			break ;
+		LOCK(&info_cast->data->death_status);
+		if (one_philo(info_cast) == 0 || info_cast->data->status == 1 || info_cast->data->done_eating == 1)
+			return(UNLOCK(&info_cast->data->death_status), NULL);
+		UNLOCK(&info_cast->data->death_status);
 		printing("is thinking", info_cast);
 		pick_first_fork(info_cast);
 		pick_second_fork(info_cast);
 		printing("is eating", info_cast);
-		increment_meals(info_cast);
-		update_time(info_cast);
-		ft_usleep(info_cast->data->t_eat, info_cast->data);
-		put_fork(info_cast);
+		lower_lines(info_cast);
+		LOCK(&info_cast->data->death_status);
+		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
+			return(UNLOCK(&info_cast->data->death_status),NULL);
+		UNLOCK(&info_cast->data->death_status);
 		printing("is sleeping", info_cast);
 		ft_usleep(info_cast->data->t_sleep, info_cast->data);
-		if (info_cast->data->status == 1 || info_cast->data->done_eating == 1)
-			break ;
 	}
 	return (NULL);
 }
@@ -57,7 +66,9 @@ void	main_thread(t_info *info)
 			UNLOCK(&info->tmp);
 			if ((ft_time() - info->start) - tmp > (unsigned int) info->t_die)
 			{
+				LOCK(&info->death_status);
 				info->status = 1;
+				UNLOCK(&info->death_status);
 				LOCK(&info->print);
 				printf("%u %d died\n", ft_time() - info->start, j + 1);
 				UNLOCK(&info->print);

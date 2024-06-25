@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 21:35:04 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/22 21:52:21 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ int	init_info(t_info *info, char **av, int ac)
 	test_arg(info, &error);
 	if (error != 0 || (ac == 6 && info->t_to_eat <= 0))
 		return (1);
-	sem_unlink("/sim_start");
-	// sem_unlink("/meal_count");
-	info->sim_start = sem_open("/sim_start", O_CREAT, 0644, 0);
-    if (info->sim_start == SEM_FAILED)
+	// sem_unlink("/sim_start");
+	sem_unlink("/meal_count");
+	info->meal_count = sem_open("/meal_count", O_CREAT, 0644, 0);
+    if (info->meal_count == SEM_FAILED)
         return (1);
 	return (0);
 }
