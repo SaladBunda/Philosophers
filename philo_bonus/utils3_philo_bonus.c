@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:34:00 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 18:51:25 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/26 11:55:56 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,22 +50,3 @@ void	pick_first_fork(t_philo *philo)
 	sem_post(philo->data->print);
 }
 
-// void	pick_second_fork(t_philo *philo)
-// {
-// 	char	*str;
-
-// 	str = "has taken a fork";
-// 	sem_wait(&philo->data->forks[(philo->i + 1) % philo->data->num]);
-// 	sem_wait(&philo->data->print);
-// 	if (philo->data->status != 1)
-// 		printf("%u %d %s\n", ft_time() - philo->data->start, philo->i + 1, str);
-// 	sem_post(&philo->data->print);
-// }
-
-// void	increment_meals(t_philo *philo)
-// {
-// 	sem_wait(philo->data->meals);
-	
-// 	philo->times_eaten++;
-// 	sem_post(philo->data->meals);
-// }

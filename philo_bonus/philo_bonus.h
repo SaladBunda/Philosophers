@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 02:47:19 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:55:21 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ typedef struct s_info
 	sem_t			*sim_start;
 	sem_t			*test;
 	sem_t			*update_time;
-	// pthread_t		food_monitor;
+	pthread_mutex_t		mutex_test;
+	pthread_mutex_t		mutex_test2;
 }	t_info;
 
 int				ft_strlen(const char *s);
@@ -79,12 +80,11 @@ void			update_time(t_philo *philo);
 int				one_philo(t_philo *philo);
 void			sleep_odds(t_philo *philo);
 void			pick_first_fork(t_philo *philo);
-void			pick_second_fork(t_philo *philo);
-void			increment_meals(t_philo *philo);
 void			test_arg(t_info *info, int *error);
 int				init_info(t_info *info, char **av, int ac);
-void			check_eated_meals(t_info *info);
 int				init_philo(t_info *info);
 int				init_mutexes(t_info *info);
+int				last_even(int num);
+void			exit_program(t_info *info);
 
 #endif

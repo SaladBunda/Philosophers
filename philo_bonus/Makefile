@@ -1,11 +1,11 @@
-SRCS = main_bonus.c utils1_bonus.c utils2_bonus.c utils3_philo_bonus.c utils4_init_bonus.c
+SRCS = main_bonus.c utils1_bonus.c utils2_bonus.c utils3_philo_bonus.c utils4_init_bonus.c utils5_extra.c
 # SRCB = main_bonus.c get_next_line_bonus.c get_next_line_utils_bonus.c ft_split_bonus.c utils_bonus.c utils2_bonus.c utils3_bonus.c utils4_bonus.c here_doc_bonus.c
 DIR = ./
 # BONUS_DIR = ./bonus/
 OBJS = $(SRCS:%.c=$(DIR)%.o)
 # OBJB = $(SRCB:%.c=$(BONUS_DIR)%.o)
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread -g
 # BONUS_NAME = pipex_bonus
 NAME = philo_bonus
 

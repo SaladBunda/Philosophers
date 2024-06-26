@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 02:48:24 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:19:26 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,31 +68,13 @@ int	init_philo(t_info *info)
 
 int	init_mutexes(t_info *info)
 {
-	int	i;
-
-	i = -1;
 	sem_unlink("/dead");
-	sem_unlink("/test");
 	sem_unlink("/print");
 	sem_unlink("/tmp");
-	sem_unlink("/meals");
-	sem_unlink("/t_eaten");
 	sem_unlink("/forks");
-	sem_unlink("/meal_count");
 	sem_unlink("/death_status");
-	sem_unlink("/test");
-	sem_unlink("/update_time");
-	info->update_time = sem_open("/update_time", O_CREAT, 0644, 1);
-    if (info->update_time == SEM_FAILED)
-        return (1);
-	info->test = sem_open("/test", O_CREAT, 0644, 1);
-    if (info->test == SEM_FAILED)
-        return (1);
 	info->death_status = sem_open("/death_status", O_CREAT, 0644, 1);
     if (info->death_status == SEM_FAILED)
-        return (1);
-	info->meal_count = sem_open("/meal_count", O_CREAT, 0644, 0);
-    if (info->meal_count == SEM_FAILED)
         return (1);
 	info->forks = sem_open("/forks", O_CREAT, 0644, info->num);
 	if(info->forks == SEM_FAILED)
@@ -105,12 +87,6 @@ int	init_mutexes(t_info *info)
 		return(1);
 	info->tmp = sem_open("/tmp", O_CREAT, 0644, 1);
 	if(info->tmp == SEM_FAILED)
-		return(1);
-	info->meals = sem_open("/meals", O_CREAT, 0644, 1);
-	if(info->meals == SEM_FAILED)
-		return(1);
-	info->t_eaten = sem_open("/t_eaten", O_CREAT, 0644, 1);
-	if(info->t_eaten == SEM_FAILED)
 		return(1);
 	return (0);
 }
