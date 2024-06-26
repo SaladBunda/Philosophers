@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 21:49:30 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/26 02:47:19 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_info
 	t_philo			*philo;
 	sem_t			*forks;
 	sem_t			*dead;
+	sem_t			*death_status;
 	sem_t			*print;
 	sem_t			*tmp;
 	sem_t			*meals;
@@ -62,6 +63,8 @@ typedef struct s_info
 	sem_t			*meal_count;
     sem_t			*done_meals;
 	sem_t			*sim_start;
+	sem_t			*test;
+	sem_t			*update_time;
 	// pthread_t		food_monitor;
 }	t_info;
 

@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/22 21:52:21 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/26 02:48:24 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,39 +41,13 @@ int	init_info(t_info *info, char **av, int ac)
 	test_arg(info, &error);
 	if (error != 0 || (ac == 6 && info->t_to_eat <= 0))
 		return (1);
-	// sem_unlink("/sim_start");
-	sem_unlink("/meal_count");
-	info->meal_count = sem_open("/meal_count", O_CREAT, 0644, 0);
-    if (info->meal_count == SEM_FAILED)
-        return (1);
 	return (0);
 }
-
-// void	check_eated_meals(t_info *info)
-// {
-// 	int	i;
-// 	int	sum;
-
-// 	i = -1;
-// 	sum = 0;
-// 	while (++i < info->num)
-// 	{
-// 		sem_wait(info->meals);
-// 		sum += info->philo[i].times_eaten;
-// 		sem_post(info->meals);
-// 	}
-// 	if (sum == info->t_to_eat * info->num)
-// 		info->done_eating = 1;
-// }
 
 int	init_philo(t_info *info)
 {
 	int	i;
 
-	sem_unlink("/forks");
-	info->forks = sem_open("/forks", O_CREAT, 0644, info->num);
-	if(info->forks == SEM_FAILED)
-		return(1);
 	info->philo = malloc(sizeof(t_philo) * info->num);
 	if (!info->philo)
 		return (1);
@@ -98,10 +72,31 @@ int	init_mutexes(t_info *info)
 
 	i = -1;
 	sem_unlink("/dead");
+	sem_unlink("/test");
 	sem_unlink("/print");
 	sem_unlink("/tmp");
 	sem_unlink("/meals");
 	sem_unlink("/t_eaten");
+	sem_unlink("/forks");
+	sem_unlink("/meal_count");
+	sem_unlink("/death_status");
+	sem_unlink("/test");
+	sem_unlink("/update_time");
+	info->update_time = sem_open("/update_time", O_CREAT, 0644, 1);
+    if (info->update_time == SEM_FAILED)
+        return (1);
+	info->test = sem_open("/test", O_CREAT, 0644, 1);
+    if (info->test == SEM_FAILED)
+        return (1);
+	info->death_status = sem_open("/death_status", O_CREAT, 0644, 1);
+    if (info->death_status == SEM_FAILED)
+        return (1);
+	info->meal_count = sem_open("/meal_count", O_CREAT, 0644, 0);
+    if (info->meal_count == SEM_FAILED)
+        return (1);
+	info->forks = sem_open("/forks", O_CREAT, 0644, info->num);
+	if(info->forks == SEM_FAILED)
+		return(1);
 	info->dead = sem_open("/dead", O_CREAT, 0644, 1);
 	if(info->dead == SEM_FAILED)
 		return(1);
