@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:34:00 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 11:55:56 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 11:30:02 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,3 @@ void	pick_first_fork(t_philo *philo)
 		printf("%u %d %s\n", ft_time() - philo->data->start, philo->i + 1, str);
 	sem_post(philo->data->print);
 }
-

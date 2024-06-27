@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:29:26 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 12:29:21 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 11:35:11 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ unsigned int	ft_time(void)
 int	ft_usleep(size_t milliseconds, t_info *info)
 {
 	size_t	start;
-	int tmp;
+	int		tmp;
 
 	start = ft_time();
 	while ((ft_time() - start) < milliseconds)
@@ -33,7 +33,7 @@ int	ft_usleep(size_t milliseconds, t_info *info)
 		tmp = info->status;
 		sem_post(info->death_status);
 		if (tmp == 1)
-			return (0) ;
+			return (0);
 		usleep(400);
 	}
 	return (0);
@@ -41,7 +41,8 @@ int	ft_usleep(size_t milliseconds, t_info *info)
 
 void	printing(char *str, t_philo *ph)
 {
-	int tmp;
+	int	tmp;
+
 	sem_wait(ph->data->death_status);
 	tmp = ph->data->status;
 	sem_post(ph->data->death_status);

@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 20:45:06 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 13:36:35 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 
 void	*main_thread(void *fo)
 {
-	int	tmp;
-	t_philo *info = (t_philo *)fo;
+	int		tmp;
+	t_philo	*info;
+
+	info = (t_philo *)fo;
 	while (1)
 	{
 		sem_wait(info->data->dead);
 		sem_wait(info->data->tmp);
 		tmp = info->time_since_eat;
 		sem_post(info->data->tmp);
-		if ((ft_time() - info->data->start) - tmp > (unsigned int) info->data->t_die)
+		if ((ft_time() - info->data->start) - tmp > (t_ui) info->data->t_die)
 		{
 			sem_wait(info->data->death_status);
 			info->data->status = 1;
@@ -34,33 +36,33 @@ void	*main_thread(void *fo)
 		sem_post(info->data->dead);
 		usleep(400);
 	}
-	return NULL;
+	return (NULL);
 }
 
 void	*routine(void *info)
 {
-	t_philo	*info_cast;
+	t_philo	*cst;
 
-	info_cast = (t_philo *)info;
-	pthread_create(&info_cast->th, NULL,(void *)main_thread,info_cast);
-	if (one_philo(info_cast) == 0)
+	cst = (t_philo *)info;
+	pthread_create(&cst->th, NULL, (void *)main_thread, cst);
+	if (one_philo(cst) == 0)
 		return (NULL);
-	sleep_odds(info_cast);
+	sleep_odds(cst);
 	while (1)
 	{
-		if((info_cast->i + 1) == last_even(info_cast->data->num) && info_cast->times_eaten == info_cast->data->t_to_eat)
+		if ((cst->i + 1) == LE(cst->DT->num) && cst->t_eaten == cst->DT->tt_eat)
 			exit(1);
-		printing("is thinking", info_cast);
-		pick_first_fork(info_cast);
-		printing("is eating", info_cast);
-		update_time(info_cast);
-		ft_usleep(info_cast->data->t_eat, info_cast->data);
-		info_cast->times_eaten++;
-		put_fork(info_cast);
-		if((info_cast->i + 1) == last_even(info_cast->data->num) && info_cast->times_eaten == info_cast->data->t_to_eat)
+		printing("is thinking", cst);
+		pick_first_fork(cst);
+		printing("is eating", cst);
+		update_time(cst);
+		ft_usleep(cst->DT->t_eat, cst->DT);
+		cst->t_eaten++;
+		put_fork(cst);
+		if ((cst->i + 1) == LE(cst->DT->num) && cst->t_eaten == cst->DT->tt_eat)
 			exit(1);
-		printing("is sleeping", info_cast);
-		ft_usleep(info_cast->data->t_sleep, info_cast->data);
+		printing("is sleeping", cst);
+		ft_usleep(cst->DT->t_sleep, cst->DT);
 	}
 	return (NULL);
 }
@@ -71,38 +73,48 @@ int	initiation(t_info *info, char **av, int ac)
 		return (write(2, "Invalid arguments\n", 18), 1);
 	if (init_philo(info) == 1)
 		return (write(2, "Error while starting program\n", 29), 1);
-	if(init_mutexes(info) == 1)
-		return (1);
-	return 0;
+	if (init_mutexes(info) == 1)
+		return (write(2, "error while initialising\n", 26), 1);
+	return (0);
+}
+
+void	waiting(t_info *info)
+{
+	int	i;
+	int	status;
+
+	waitpid(0, &status, 0);
+	if (status != 0)
+	{
+		i = -1;
+		while (++i < info->num)
+			kill(info->philo[i].th_fid, SIGKILL);
+	}
 }
 
 int	main(int ac, char **av)
 {
 	t_info	info;
 	int		i;
-	int		status;
 
 	if (ac == 5 || ac == 6)
 	{
-		if(initiation(&info, av, ac) == 1)
-			return(write(2,"error while initialising\n",26),1);
+		if (initiation(&info, av, ac) == 1)
+			return (1);
 		i = -1;
+		if(one_philo_process(&info) == 1)
+			return(0);
 		while (++i < info.num)
 		{
 			info.philo[i].th_fid = fork();
-			if(info.philo[i].th_fid == 0)
+			if (info.philo[i].th_fid == 0)
 			{
 				routine(&info.philo[i]);
 				exit(0);
 			}
 		}
-        waitpid(0, &status, 0);
-		if (status != 0)
-		{
-		i = -1;
-			while (++i < info.num)
-				kill(info.philo[i].th_fid, SIGKILL);
-		}
+		waiting(&info);
+		exit_program(&info);
 		return (0);
 	}
 	return (1);

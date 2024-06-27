@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 19:55:21 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 13:36:03 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,25 @@
 # include <sys/time.h>
 # include <semaphore.h>
 # include <signal.h>
+# define DT data
+# define LE last_even
 
+typedef unsigned int	t_ui;
 
 typedef struct s_info	t_info;
 
 typedef struct s_philo
 {
-	int			eating;
-	int			sleeping;
-	int			thinking;
-	int			alive;
-	int			i;
-	int			t_die;
-	int			t_eat;
-	int			t_sleep;
-	int			t_to_eat;
-	int			times_eaten;
-	int			time_since_eat;
-	t_info		*data;
-	int			th_fid;
+	int					alive;
+	int					i;
+	int					t_die;
+	int					t_eat;
+	int					t_sleep;
+	int					tt_eat;
+	int					t_eaten;
+	int					time_since_eat;
+	t_info				*data;
+	int					th_fid;
 	pthread_t			th;
 }	t_philo;
 
@@ -49,7 +49,7 @@ typedef struct s_info
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
-	int				t_to_eat;
+	int				tt_eat;
 	int				done_eating;
 	unsigned int	start;
 	t_philo			*philo;
@@ -58,15 +58,6 @@ typedef struct s_info
 	sem_t			*death_status;
 	sem_t			*print;
 	sem_t			*tmp;
-	sem_t			*meals;
-	sem_t			*t_eaten;
-	sem_t			*meal_count;
-    sem_t			*done_meals;
-	sem_t			*sim_start;
-	sem_t			*test;
-	sem_t			*update_time;
-	pthread_mutex_t		mutex_test;
-	pthread_mutex_t		mutex_test2;
 }	t_info;
 
 int				ft_strlen(const char *s);
@@ -86,5 +77,6 @@ int				init_philo(t_info *info);
 int				init_mutexes(t_info *info);
 int				last_even(int num);
 void			exit_program(t_info *info);
+int				one_philo_process(t_info *info);
 
 #endif

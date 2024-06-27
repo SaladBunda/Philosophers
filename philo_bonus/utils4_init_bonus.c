@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:39:08 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/26 19:19:26 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:09:15 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ int	init_info(t_info *info, char **av, int ac)
 	info->t_eat = ft_atoi(av[3], &error);
 	info->t_sleep = ft_atoi(av[4], &error);
 	if (ac == 6)
-		info->t_to_eat = ft_atoi(av[5], &error);
+		info->tt_eat = ft_atoi(av[5], &error);
 	else
-		info->t_to_eat = -1;
+		info->tt_eat = -1;
 	test_arg(info, &error);
-	if (error != 0 || (ac == 6 && info->t_to_eat <= 0))
+	if (error != 0 || (ac == 6 && info->tt_eat <= 0))
 		return (1);
 	return (0);
 }
@@ -60,7 +60,7 @@ int	init_philo(t_info *info)
 		info->philo[i].alive = 1;
 		info->philo[i].data = info;
 		info->philo[i].time_since_eat = 0;
-		info->philo[i].times_eaten = 0;
+		info->philo[i].t_eaten = 0;
 		i++;
 	}
 	return (0);
@@ -74,19 +74,19 @@ int	init_mutexes(t_info *info)
 	sem_unlink("/forks");
 	sem_unlink("/death_status");
 	info->death_status = sem_open("/death_status", O_CREAT, 0644, 1);
-    if (info->death_status == SEM_FAILED)
-        return (1);
+	if (info->death_status == SEM_FAILED)
+		return (1);
 	info->forks = sem_open("/forks", O_CREAT, 0644, info->num);
-	if(info->forks == SEM_FAILED)
-		return(1);
+	if (info->forks == SEM_FAILED)
+		return (1);
 	info->dead = sem_open("/dead", O_CREAT, 0644, 1);
-	if(info->dead == SEM_FAILED)
-		return(1);
+	if (info->dead == SEM_FAILED)
+		return (1);
 	info->print = sem_open("/print", O_CREAT, 0644, 1);
-	if(info->print == SEM_FAILED)
-		return(1);
+	if (info->print == SEM_FAILED)
+		return (1);
 	info->tmp = sem_open("/tmp", O_CREAT, 0644, 1);
-	if(info->tmp == SEM_FAILED)
-		return(1);
+	if (info->tmp == SEM_FAILED)
+		return (1);
 	return (0);
 }
