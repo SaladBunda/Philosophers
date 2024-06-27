@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils5_extra.c                                     :+:      :+:    :+:   */
+/*   utils5_extra_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 19:45:59 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/27 13:37:46 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:51:47 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,16 @@ int	one_philo_process(t_info *info)
 			printf("0 1 has taken a fork\n");
 			ft_usleep(info->t_die, info);
 			printf("%u 1 died\n", info->t_die);
-			exit(0);
 		}
+		waitpid(0, 0, 0);
 		return (1);
 	}
 	else
 		return (0);
+}
+
+void	print_error(void)
+{
+	write(2, "Usage: ./philo (philos) (time to die) ", 39);
+	write(2, "(time to eat) (time to sleep) (optional: meals)\n", 48);
 }

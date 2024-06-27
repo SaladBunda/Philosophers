@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:18:04 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/27 13:36:03 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:51:57 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,6 @@ int				init_mutexes(t_info *info);
 int				last_even(int num);
 void			exit_program(t_info *info);
 int				one_philo_process(t_info *info);
+void			print_error(void);
 
 #endif

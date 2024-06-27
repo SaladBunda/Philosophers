@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 02:35:38 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:50:18 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	main_thread(t_info *info)
 			}
 			UNLOCK(&info->dead);
 		}
-		usleep(500);
+		usleep(400);
 	}
 }
 

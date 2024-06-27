@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/27 13:36:35 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/27 16:52:01 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,8 @@ int	main(int ac, char **av)
 		if (initiation(&info, av, ac) == 1)
 			return (1);
 		i = -1;
-		if(one_philo_process(&info) == 1)
-			return(0);
+		if (one_philo_process(&info) == 1)
+			return (exit_program(&info), 0);
 		while (++i < info.num)
 		{
 			info.philo[i].th_fid = fork();
@@ -117,5 +117,6 @@ int	main(int ac, char **av)
 		exit_program(&info);
 		return (0);
 	}
-	return (1);
+	else
+		print_error();
 }
