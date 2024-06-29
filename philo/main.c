@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 01:55:11 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/27 16:50:18 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/29 22:15:42 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ int	main(int ac, char **av)
 	if (ac == 5 || ac == 6)
 	{
 		if (init_info(&info, av, ac) == 1)
-			return (write(2, "Invalid arguments\n", 18), free_info(&info), 1);
+			return (write(2, "Invalid arguments\n", 18), 1);
 		if (init_philo(&info) == 1)
-			return (write(2, "Error while starting program\n", 29), 1);
+			return (write(2, "Error while starting program\n", 29), free_info(&info), 1);
 		init_mutexes(&info);
 		i = -1;
 		while (++i < info.num)

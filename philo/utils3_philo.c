@@ -6,7 +6,7 @@
 /*   By: ael-maaz <ael-maaz@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 23:34:00 by ael-maaz          #+#    #+#             */
-/*   Updated: 2024/06/25 02:21:40 by ael-maaz         ###   ########.fr       */
+/*   Updated: 2024/06/29 22:13:08 by ael-maaz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	one(t_philo *philo)
 	{
 		printf("0 1 has taken a fork\n");
 		ft_usleep(philo->t_die, philo->data);
-		printf("%u 1 died\n", philo->t_die);
 		return (0);
 	}
 	return (1);
